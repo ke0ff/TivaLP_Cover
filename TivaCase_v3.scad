@@ -4,22 +4,22 @@
 // This is an enclosure for an EK-TM4C123GXL LaunchPad board and a custom LaunchPad
 //	carrier board.
 //
+// Rev-003 (bot), 12/24/2021
+//	(bot) added lid mtg countersinks (x6)
+//
 // Rev-003 (lid), 12/23/2021
 //	(lid) added lip0 clips to remove interference
 //
 // Rev-002, 12/21/2021
 //	incorporated fixes from first print run
-//	increased lid thickness to provide more room for LP board
+//	increased lid thickness to provide room for stock LP board
 //
 // Rev-001, 12/16/2021
 //	initial code -- copied from uxcover
 
-//use <char.scad>
-
 //----------------------------------------------------------------------------------------------------------------------
 // User defined parameters.  Modify these to suit a particular application
 // NOTE: All data in this file is in mm
-
 //----------------------------------------------------------------------------------------------------------------------
 // parametric variables:
 
@@ -35,50 +35,47 @@ wthickt = 1.5;
 crad = 5;
 crad2 = crad/2;
 
-// X-rulers
-//#translate([-.69,0,0]) cube([0.01,30,50]);	// ruler
-//#translate([175.41,0,0]) cube([0.01,30,50]);	// inside main void ruler 1
-//#translate([1.67,0,0]) cube([0.01,30,50]);	// inside main void ruler 2
-//#translate([175.34,0,0]) cube([0.01,30,50]);	// outside shroud ruler 2
-// Y-rulers
-//#translate([0,23.81,0]) cube([180,0.01,50]);	// ruler
-//#translate([0,22.36 ,0]) cube([180,0.01,50]);	// ruler
-// Z-rulers
-//#translate([0,0,0]) cube([10,40,.01]);	// ruler
-//#translate([0,0,2.04]) cube([9,40,.01]);	// ruler
-
-// Set each variable to "1" to render that part (only one part at a time).  Set all = "0" to enable composite
-//	rendering (below).
-
-plotlid = 1;
-plotcase = 0;
+////////////////////////////////////////////////////////////////////////////////
+// Set each variable to "1" to render that part (!! only one part at a time !!).
+// Set all = "0" to enable composite rendering (below).
+plotlid = 0;
+plotcase = 1;
 plotlp = 0;
 
-/////////////////////////////////////
-
+// these statements plot the 3D parts to print (one plot only, Visily!)
 if(plotlid) lid(1);
 if(plotlp) lid_lpipe();
 if(plotcase) case();
+////////////////////////////////////////////////////////////////////////////////
 
-// Composite plot.  Places all elements in an assembly orientation
+///////////////////////////////////////////////////////////
+// Composite (debug) plot.  Places all elements in an
+//	assembly orientation if no 3D parts are enabled (above)
 
 if(!plotlid && !plotlp && !plotcase){
-//	translate([0,0,0]) tiva_assy();
+//	translate([0,0,0]) tiva_assy();						// launch-pad+carrier mockup for fit-check
+	//
+	// this is the complete case, oriented into an as-assembled view:
 	difference(){
 		union(){
-			color("darkslategray",0.98) case();
-//			translate([0,length,height+heightl]) rotate([180,0,0]) color("darkslategray",1.0) lid(1);
-			translate([0,length,height+heightl+5]) rotate([180,0,0]) color("blue",1.0) lid(1);
+			color("darkslategray",0.97) case();
+			translate([0,length,height+heightl]) rotate([180,0,0]) color("darkslategray",1.0) lid(1);
 			translate([0,length,height+heightl]) rotate([180,0,0]) lid_lpipe();
 		}
-//		translate([-1,-45,20.5]) cube([90,60,90]);		// cut-away viewing
+//		translate([-1,-45,20.5]) cube([90,60,90]);		// cut-away viewing slice-cube (debug)
 	}
 }
 
-//////////////////****************\\\\\\\\\\\\\\\\\\
-				//    modules     \\
+//
+//
+//**************************************************
 				//****************\\
-
+				//    modules     \\
+				//    follow      \\
+				//****************\\
+//**************************************************
+//
+//
 ///////////////
 // Bottom shell
 
@@ -119,11 +116,20 @@ module case(){
 //		translate([17.5,length-4,18]) pilot(1);											// usb pilot
 		translate([15,length-4,17.3]) pilot();											// pilot
 		translate([47,length-4,17.3]) pilot();											// pilot
+		translate([15,length,17.3]) rotate([90,0,0]) cs(2);								// side countersinks
+		translate([47,length,17.3]) rotate([90,0,0]) cs(2);								// side countersinks
+
 		translate([4,20,17.3]) rotate([0,0,90]) pilot();								// pilot
 		translate([4,67,17.3]) rotate([0,0,90]) pilot();								// pilot
+		translate([0,20,17.3]) rotate([0,90,0]) cs(2);									// side countersinks
+		translate([0,67,17.3]) rotate([0,90,0]) cs(2);									// side countersinks
+
 		translate([width-4,20,17.3]) rotate([0,0,90]) pilot();							// pilot
 		translate([width-4,67,17.3]) rotate([0,0,90]) pilot();							// pilot
-		translate([15,15,1.5]) linear_extrude(1) text("REV 2", size=6);					// version & PN texts
+		translate([width,20,17.3]) rotate([0,270,0]) cs(2);								// side countersinks
+		translate([width,67,17.3]) rotate([0,270,0]) cs(2);								// side countersinks
+
+		translate([15,15,1.5]) linear_extrude(1) text("REV 3", size=6);					// version & PN texts
 		translate([15,25,1.5]) linear_extrude(1) text("TivaLP bot", size=6);
 	}
 }
@@ -164,8 +170,8 @@ module lid(hole){
 		translate([4,67,lheight-3.5]) rotate([0,0,90]) pilot();										// pilot
 		translate([width-4,20,lheight-3.5]) rotate([0,0,90]) pilot();								// pilot
 		translate([width-4,67,lheight-3.5]) rotate([0,0,90]) pilot();								// pilot
-		translate([2.5,82.21,8.01]) cube([5,5,3]);														// corner clearance @ lip0
-		translate([60,82.21,8.01]) cube([5,5,3]);														// corner clearance @ lip0
+		translate([2.5,82.21,8.01]) cube([5,5,3]);													// corner clearance @ lip0
+		translate([60,82.21,8.01]) cube([5,5,3]);													// corner clearance @ lip0
 		translate([15,10,1.5]) linear_extrude(1) text("REV 3", size=6);								// version and PN texts
 		translate([15,20,1.5]) linear_extrude(1) text("TivaLP top", size=6);
 	}
@@ -234,7 +240,7 @@ module tiva_lp_mtg(depth=2){
 }
 
 //////////////////////////////////////////
-// Tiva carrier mounting hole countersinks
+// Tiva carrier mounting hole countersinks (4 total)
 
 module tiva_lp_mtg_cs(screw=4){
 	if(screw == 2){
@@ -254,6 +260,16 @@ module tiva_lp_mtg_cs(screw=4){
 	}
 }
 
+/////////////////////////////////////
+// generic countersink
+
+module cs(screw=4){
+	if(screw == 2){
+		translate([0,0,.6]) cylinder(r1=4.37/2, r2=2.18/2, h=1.3, $fn=32, center = true);	// #2 countersinks
+	}else{
+		translate([0,0,.78]) cylinder(r1=5.72/2, r2=2.84/2, h=1.7, $fn=32, center = true);	// #4 countersinks
+	}
+}
 /////////////////////////////////////
 // SMA connector (fit check artifact)
 module sma(){
@@ -333,9 +349,24 @@ module db9(){
 	translate([0,0,2.05]) union(){
 		translate([0,0,0]) cube([18.44,10.06,15], center=true);								// DB9 cutout
 		translate([0,0,3.0]) cube([32,14,10.1], center=true);								// DB9 CM
-		translate([(101.60-76.20)/2,0,0]) cylinder(r=1.6, h=20, $fn=16, center=true);		// db9 holes,	#1
-		translate([-(101.60-76.20)/2,0,0]) cylinder(r=1.6, h=20, $fn=16, center=true);		//				#2
+		translate([(101.60-76.20)/2,0,0]) cylinder(r=1.6, h=20, $fn=32, center=true);		// db9 mtg holes,	#1
+		translate([-(101.60-76.20)/2,0,0]) cylinder(r=1.6, h=20, $fn=32, center=true);		//				    #2
 	}
 }
+
+/////////////////////////
+// debug artifacts
+//
+// X-rulers
+//#translate([-.69,0,0]) cube([0.01,30,50]);	// ruler
+//#translate([175.41,0,0]) cube([0.01,30,50]);	// inside main void ruler 1
+//#translate([1.67,0,0]) cube([0.01,30,50]);	// inside main void ruler 2
+//#translate([175.34,0,0]) cube([0.01,30,50]);	// outside shroud ruler 2
+// Y-rulers
+//#translate([0,23.81,0]) cube([180,0.01,50]);	// ruler
+//#translate([0,22.36 ,0]) cube([180,0.01,50]);	// ruler
+// Z-rulers
+//#translate([0,0,0]) cube([10,40,.01]);	// ruler
+//#translate([0,0,2.04]) cube([9,40,.01]);	// ruler
 
 // EOF
